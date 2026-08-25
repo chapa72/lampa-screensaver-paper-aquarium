@@ -55,7 +55,7 @@
         if (!force && current) return current
 
         const promptText = 'Paper Aquarium\nВведите ID аквариума после /t/ (например: c5ughmbhfa)'
-        const answer = typeof window.prompt === 'function' ? window.prompt(promptText, current || 'c5ughmbhfa') : null
+        const answer = typeof window.prompt === 'function' ? window.prompt(promptText, current || '') : null
 
         if (answer === null) return current || ''
 
@@ -128,7 +128,7 @@
                 create() {
                     const tankId = sanitizeTankId(this.params.id || getTankId() || '')
                     const finalTankId = tankId || askTankId(true)
-                    const url = 'https://aquarium.mrmot9i.com/t/' + encodeURIComponent(finalTankId) + '?demo'
+                    const url = 'https://aquarium.mrmot9i.com/t/' + encodeURIComponent(finalTankId) + '?tv'
 
                     this.html = $('<div class="screensaver-paper-aquarium"><iframe src="' + url + '" allowfullscreen></iframe></div>')
                 }
