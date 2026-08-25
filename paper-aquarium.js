@@ -54,8 +54,8 @@
 
         if (!force && current) return current
 
-        const promptText = 'Paper Aquarium\nВведите ID аквариума после /t/ (например: c5ughmbhfa)'
-        const answer = typeof window.prompt === 'function' ? window.prompt(promptText, current || '') : null
+        const promptText = 'Paper Aquarium\nведите ID аквариума после /t/ (например: c5ughmbhfa)'
+        const answer = typeof window.prompt === 'function' ? window.prompt(promptText, current || 'c5ughmbhfa') : null
 
         if (answer === null) return current || ''
 
@@ -63,7 +63,7 @@
 
         if (!cleaned) {
             if (typeof window.alert === 'function') {
-                window.alert('Неверный ID аквариума. Нужен номер после /t/, например: c5ughmbhfa')
+                window.alert('еверный ID аквариума. ужен номер после /t/, например: c5ughmbhfa')
             }
             return askTankId(true)
         }
@@ -97,6 +97,41 @@
                 border: 0;
                 background: transparent;
             }
+
+            .screensaver-paper-aquarium__overlay {
+                position: absolute;
+                inset: 0;
+                z-index: 1;
+                pointer-events: none;
+                background: linear-gradient(to top, rgba(0,0,0,.28), rgba(0,0,0,0) 28%, rgba(0,0,0,.18) 100%);
+            }
+
+            .screensaver-paper-aquarium__datetime {
+                position: absolute;
+                right: 4.5vh;
+                bottom: 4vh;
+                z-index: 2;
+                pointer-events: none;
+                color: rgba(255,255,255,.95);
+                text-align: right;
+                text-shadow: 0 3px 12px rgba(0,0,0,.45);
+            }
+
+            .screensaver-paper-aquarium__datetime-time {
+                font-size: clamp(28px, 3vw, 90px);
+                line-height: .9;
+                font-weight: 700;
+                letter-spacing: .04em;
+            }
+
+            .screensaver-paper-aquarium__datetime-date {
+                margin-top: .3vh;
+                font-size: clamp(11px, 1.1vw, 24px);
+                line-height: 1.2;
+                opacity: .9;
+                letter-spacing: .14em;
+                text-transform: uppercase;
+            }
         `
 
         document.head.appendChild(style)
@@ -123,6 +158,7 @@
                 constructor(params) {
                     this.params = params || {}
                     this.html = null
+                    this.clock = null
                 }
 
                 create() {
@@ -130,7 +166,24 @@
                     const finalTankId = tankId || askTankId(true)
                     const url = 'https://aquarium.mrmot9i.com/t/' + encodeURIComponent(finalTankId) + '?tv'
 
-                    this.html = $('<div class="screensaver-paper-aquarium"><iframe src="' + url + '" allowfullscreen></iframe></div>')
+                    this.html = $(`
+                        <div class="screensaver-paper-aquarium">
+                            <div class="screensaver-paper-aquarium__overlay"></div>
+                            <iframe src="${url}" allowfullscreen></iframe>
+                            <div class="screensaver-paper-aquarium__datetime">
+                                <div class="screensaver-paper-aquarium__datetime-time">
+                                    <span class="time--clock"></span>
+                                </div>
+                                <div class="screensaver-paper-aquarium__datetime-date">
+                                    <span class="time--full"></span>
+                                </div>
+                            </div>
+                        </div>
+                    `)
+
+                    if (L.Utils && L.Utils.time) {
+                        this.clock = L.Utils.time(this.html[0])
+                    }
                 }
 
                 render() {
@@ -138,9 +191,8 @@
                 }
 
                 destroy() {
-                    if (this.html) {
-                        this.html.remove()
-                    }
+                    if (this.clock && this.clock.destroy) this.clock.destroy()
+                    if (this.html) this.html.remove()
                 }
             }
 
