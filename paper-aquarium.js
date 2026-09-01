@@ -80,57 +80,67 @@
         style.id = STYLE_ID
         style.textContent = `
             .screensaver-paper-aquarium {
-                position: absolute !important;
+                position: fixed !important;
                 inset: 0;
                 width: 100%;
                 height: 100%;
-                background: radial-gradient(circle at top, #0d2d3c 0%, #06141d 45%, #020d13 100%);
+                background: #000;
                 overflow: hidden;
-                z-index: 9999;
+                z-index: 10000;
             }
 
-            .screensaver-paper-aquarium iframe {
-                position: absolute;
-                inset: 0;
+            .screensaver-paper-aquarium iframe,
+            .screensaver-paper-aquarium .screensaver-paper-aquarium__video {
+                position: fixed;
+                left: 0;
+                top: 0;
                 width: 100%;
                 height: 100%;
                 border: 0;
-                background: transparent;
+                background: #000;
+                z-index: 0;
             }
 
-            .screensaver-paper-aquarium__overlay {
-                position: absolute;
-                inset: 0;
-                z-index: 1;
+            .screensaver-paper-aquarium__gradient {
+                position: fixed;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                height: 45%;
+                background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 1%, rgba(0,0,0,.75) 100%);
+                z-index: 2;
                 pointer-events: none;
-                background: linear-gradient(to top, rgba(0,0,0,.28), rgba(0,0,0,0) 28%, rgba(0,0,0,.18) 100%);
             }
 
             .screensaver-paper-aquarium__datetime {
-                position: absolute;
-                right: 4.5vh;
-                bottom: 4vh;
-                z-index: 2;
+                position: fixed;
+                right: 5%;
+                bottom: 10%;
+                width: 50%;
+                z-index: 3;
                 pointer-events: none;
-                color: rgba(255,255,255,.95);
+                color: rgba(255,255,255,.9);
                 text-align: right;
-                text-shadow: 0 3px 12px rgba(0,0,0,.45);
+                text-shadow: 2px 2px 2px rgba(0,0,0,.9);
+                opacity: 0.5;
             }
 
             .screensaver-paper-aquarium__datetime-time {
-                font-size: clamp(28px, 3vw, 90px);
-                line-height: .9;
-                font-weight: 700;
-                letter-spacing: .04em;
+                font-size: 3em;
+                font-weight: 300;
+                line-height: 1;
+                margin-bottom: .25em;
             }
 
             .screensaver-paper-aquarium__datetime-date {
-                margin-top: .3vh;
-                font-size: clamp(11px, 1.1vw, 24px);
+                font-size: 1.5em;
+                font-weight: 300;
                 line-height: 1.2;
-                opacity: .9;
-                letter-spacing: .14em;
-                text-transform: uppercase;
+            }
+
+            .screensaver-paper-aquarium .time--clock,
+            .screensaver-paper-aquarium .time--full {
+                display: inline-block;
             }
         `
 
@@ -168,8 +178,8 @@
 
                     this.html = $(`
                         <div class="screensaver-paper-aquarium">
-                            <div class="screensaver-paper-aquarium__overlay"></div>
-                            <iframe src="${url}" allowfullscreen></iframe>
+                            <iframe class="screensaver-paper-aquarium__video" src="${url}" allowfullscreen></iframe>
+                            <div class="screensaver-paper-aquarium__gradient"></div>
                             <div class="screensaver-paper-aquarium__datetime">
                                 <div class="screensaver-paper-aquarium__datetime-time">
                                     <span class="time--clock"></span>
@@ -183,6 +193,7 @@
 
                     if (L.Utils && L.Utils.time) {
                         this.clock = L.Utils.time(this.html[0])
+                        if (this.clock && this.clock.tik) this.clock.tik()
                     }
                 }
 
